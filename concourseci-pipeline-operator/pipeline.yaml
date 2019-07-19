@@ -1,0 +1,89 @@
+# https://github.com/containerdaysjp/showks-concourse-pipelines/blob/master/showks-canvas-USERNAME/pr.yaml
+resource_types:
+  - name: pull-request
+    type: docker-image
+    source:
+      repository: containerdaysjp/pr
+
+resources:
+- name: showks-concourseci-pipeline-operator-pr
+  type: pull-request
+  check_every: 1m
+  source:
+    repo: cloudnativedaysjp/showks-concourseci-pipeline-operator
+    access_token: ((access_token))
+    private_key: ((private_key))
+
+- name: showks-concourseci-pipeline-operator
+  type: git
+  check_every: 1m
+  source:
+    uri: https://github.com/cloudnativedaysjp/showks-concourseci-pipeline-operator
+    branch: master
+
+- name: docker-reg
+  type: docker-image
+  source:
+    repository: cloudnativedaysjp/concourseci-pipeline-operator
+    username: ((dockerhub_username))
+    password: ((dockerhub_password))
+
+jobs:
+- name: test
+  plan:
+  - get: showks-concourseci-pipeline-operator-pr
+    trigger: true
+    version: every
+  - put: showks-concourseci-pipeline-operator-pr
+    params:
+      path: showks-concourseci-pipeline-operator-pr
+      status: pending
+  - task: unit-test
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: golang
+          tag: "1.12"
+      inputs:
+        - name: showks-concourseci-pipeline-operator-pr
+          path: /go/src/github.com/cloudnativedaysjp/showks-concourseci-pipeline-operator
+      outputs:
+        - name: messages
+      run:
+        path: /bin/bash
+        args:
+          - -xce
+          - |
+            GO111MODULE=off
+            SRCPATH=$PWD/go/src/github.com/cloudnativedaysjp/showks-concourseci-pipeline-operator
+            GOPATH=$PWD/go
+            cd $SRCPATH
+            wget https://github.com/kubernetes-sigs/kubebuilder/releases/download/v1.0.8/kubebuilder_1.0.8_linux_amd64.tar.gz
+            tar xvzf kubebuilder_1.0.8_linux_amd64.tar.gz
+            export TEST_ASSET_KUBECTL=$SRCPATH/kubebuilder_1.0.8_linux_amd64/bin/kubectl
+            export TEST_ASSET_KUBE_APISERVER=$SRCPATH/kubebuilder_1.0.8_linux_amd64/bin/kube-apiserver
+            export TEST_ASSET_ETCD=$SRCPATH/kubebuilder_1.0.8_linux_amd64/bin/etcd
+            env
+            make test
+    on_failure:
+      put: showks-concourseci-pipeline-operator-pr
+      params:
+        path: showks-concourseci-pipeline-operator-pr
+        status: failure
+    on_success:
+      put: showks-concourseci-pipeline-operator-pr
+      params:
+        path: showks-concourseci-pipeline-operator-pr
+        status: success
+
+- name: deploy
+  plan:
+  - get: showks-concourseci-pipeline-operator
+    trigger: true
+    version: every
+  - put: docker-reg
+    params:
+      build: ./showks-concourseci-pipeline-operator
+
