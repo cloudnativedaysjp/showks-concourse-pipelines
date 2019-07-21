@@ -2,34 +2,34 @@ resources:
 - name: app
   type: git
   source:
-    uri: https://github.com/containerdaysjp/showks-portal-frontend
+    uri: https://github.com/cloudnativedaysjp/showks-portal-frontend
     branch: master
 
 - name: app-staging
   type: git
   source:
-    uri: https://github.com/containerdaysjp/showks-portal-frontend
+    uri: https://github.com/cloudnativedaysjp/showks-portal-frontend
     branch: staging
 
 - name: concourse-pipelines
   type: git
   source:
-    uri: https://github.com/containerdaysjp/showks-concourse-pipelines
+    uri: https://github.com/cloudnativedaysjp/showks-concourse-pipelines
     branch: master
 
 - name: k8s-manifests
   type: git
   source:
-    uri: git@github.com:containerdaysjp/showks-manifests-prod.git
+    uri: git@github.com:cloudnativedaysjp/showks-manifests-prod.git
     branch: master
     private_key: ((github_prod_manifests_key))
 
 - name: container-image
   type: docker-image
   source:
-    repository: gcr.io/ipc-cloudnativedays/showks-portal-frontend
-    username: ((registry_user))
-    password: ((registry_password))
+    repository: cloudnativedaysjp/showks-portal-frontend
+    username: ((dockerhub_user))
+    password: ((dockerhub_password))
 
 jobs:
 - name: push-image
