@@ -4,7 +4,7 @@ resources:
   check_every: 3m
   webhook_token: ((github_webhook_token))
   source:
-    uri: https://github.com/containerdaysjp/showks-canvas-USERNAME
+    uri: https://github.com/cloudnativedaysjp/showks-canvas-USERNAME
     branch: staging
 
 - name: container-image
@@ -18,14 +18,14 @@ resources:
   type: git
   check_every: 3m
   source:
-    uri: https://github.com/containerdaysjp/showks-concourse-pipelines
+    uri: https://github.com/cloudnativedaysjp/showks-concourse-pipelines
     branch: master
 
 - name: k8s-manifests
   type: git
   check_every: 3m
   source:
-    uri: git@github.com:containerdaysjp/showks-manifests-stg.git
+    uri: git@github.com:cloudnativedaysjp/showks-manifests-stg.git
     branch: master
     private_key: ((github_key))
 

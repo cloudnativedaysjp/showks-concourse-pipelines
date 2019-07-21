@@ -2,7 +2,7 @@ resource_types:
 - name: pull-request
   type: docker-image
   source:
-    repository: containerdaysjp/pr
+    repository: cloudnativedaysjp/pr
 
 resources:
 - name: showks-canvas-pr
@@ -10,14 +10,14 @@ resources:
   check_every: 1m
   webhook_token: ((github_webhook_token))
   source:
-    repo: containerdaysjp/showks-canvas-USERNAME
+    repo: cloudnativedaysjp/showks-canvas-USERNAME
     access_token: ((github_access_token))
     private_key: ((github_key))
 
 - name: showks-canvas
   type: git
   source:
-    uri: https://github.com/containerdaysjp/showks-canvas
+    uri: https://github.com/cloudnativedaysjp/showks-canvas
 
 jobs:
 - name: test
@@ -36,7 +36,7 @@ jobs:
       image_resource:
         type: docker-image
         source: 
-          repository: containerdaysjp/ruby
+          repository: cloudnativedaysjp/ruby
           tag: "2.5"
       inputs:
         - name: showks-canvas-pr
@@ -55,7 +55,7 @@ jobs:
             AUTH_TOKEN=$AUTH_TOKEN
             PR_NUM=`cat .git/id`
             REPO=showks-canvas-USERNAME
-            URL="https://api.github.com/repos/containerdaysjp/${REPO}/pulls/${PR_NUM}"
+            URL="https://api.github.com/repos/cloudnativedaysjp/${REPO}/pulls/${PR_NUM}"
             CURL="curl -s -H \"Authorization: token ${AUTH_TOKEN}\""
   
             # Where is this PR from and what is branch name?
@@ -71,7 +71,7 @@ jobs:
             fi
   
             # Check github repo
-            if [ "${PR_REMOTE}" != "containerdaysjp/${REPO}" ]; then
+            if [ "${PR_REMOTE}" != "cloudnativedaysjp/${REPO}" ]; then
                 echo "You cannot send PR from forked repository. Please send from same repository" > ../messages/failed
                 exit 1
             fi
