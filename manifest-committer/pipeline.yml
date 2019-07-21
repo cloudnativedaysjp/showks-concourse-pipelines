@@ -6,13 +6,13 @@ resources:
 - name: stg-k8s-manifests
   type: git
   source:
-    uri: git@github.com:containerdaysjp/showks-manifests-stg.git
+    uri: git@github.com:cloudnativedaysjp/showks-manifests-stg.git
     branch: master
     private_key: ((github_key))
 - name: prod-k8s-manifests
   type: git
   source:
-    uri: git@github.com:containerdaysjp/showks-manifests-prod.git
+    uri: git@github.com:cloudnativedaysjp/showks-manifests-prod.git
     branch: master
     private_key: ((github_key))
 jobs:
@@ -35,7 +35,7 @@ jobs:
         - name: changed-k8s-manifests
       params:
         SERVICE_ACCOUNT: ((registry_password))
-        PROJECT_NAME: ipc-containerdays
+        PROJECT_NAME: ipc-cloudnativedays
       run:
         path: bash
         args:
@@ -84,7 +84,7 @@ jobs:
         - name: changed-k8s-manifests
       params:
         SERVICE_ACCOUNT: ((registry_password))
-        PROJECT_NAME: ipc-containerdays
+        PROJECT_NAME: ipc-cloudnativedays
       run:
         path: bash
         args:
